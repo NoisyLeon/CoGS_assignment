@@ -23,6 +23,10 @@ from scipy import stats
 # In[2]:
 
 
+# added by LF
+dj.config['database.host'] = "127.0.0.1"
+dj.config['database.user'] = "root"
+dj.config['database.password'] = "tutorial"
 dj.conn()
 
 
@@ -33,14 +37,14 @@ dj.conn()
 # In[3]:
 
 
-schema = dj.schema('manuel_test')
+schema = dj.schema('lfeng_prb3')
 
 
 # And the relational structure of the database. This database contains users that run experiments. Every experiment contains a data set with datapoints; these datapoints are analyzed and the result saved back in the database.
 # 
 # There are four allowed types of tables: Lookup, Manual, Imported and Part. The construction of the database is done by the definitions in the definition string. Lookup and Manual allow to specify all relevant components. Imported and computed run a function to populate the database automatically
 
-# In[4]:
+# In[19]:
 
 
 @schema
@@ -65,6 +69,7 @@ class Experiment(dj.Manual):
     ----
     """
     
+    
 @schema
 class Set(dj.Imported):
     definition = """
@@ -83,23 +88,24 @@ class Set(dj.Imported):
         y : float
         """
 
-    def _make_tuples(self, key):
-        # Note that Imported and Computed (below) have a function _make_tuples
-        # This allows to call a method s.populate() to automatically populate the data with content.
-        n = 10
-        mu = 0
-        sigma = .1
-        self.insert1(key)
-        # Insert all of our datapoints
-        b = []
-        for i in range(n):
-            b.append(dict(key, datapoint=i, x=i + np.random.normal(mu, sigma), y=2*i + np.random.normal(mu, sigma)))
-        self.DataPoint().insert(b)
+#     def _make_tuples(self, key):
+#         # Note that Imported and Computed (below) have a function _make_tuples
+#         # This allows to call a method s.populate() to automatically populate the data with content.
+#         n = 10
+#         mu = 0
+#         sigma = .1
+#         self.insert1(key)
+#         # Insert all of our datapoints
+#         b = []
+#         for i in range(n):
+#             print ('haha')
+#             b.append(dict(key, datapoint=i, x=i + np.random.normal(mu, sigma), y=2*i + np.random.normal(mu, sigma)))
+#         self.DataPoint().insert(b)
 
 
 # Datajoint allows to plot an entity relationship diagram. This shows explicitly what we have just described:
 
-# In[5]:
+# In[20]:
 
 
 dj.ERD(schema)
@@ -111,13 +117,13 @@ dj.ERD(schema)
 
 # The first think to enter into the databse are two experimenters, and their first experiment. With datajoint, we use the method .insert()
 
-# In[6]:
+# In[21]:
 
 
 Experiment().insert((['Angus',1],['John',1]), skip_duplicates = True)
 
 
-# In[7]:
+# In[22]:
 
 
 Experiment() #Shows the current content of the database
@@ -125,7 +131,7 @@ Experiment() #Shows the current content of the database
 
 # Now that we have two experiments defined, we can populate the datasets for the experiment. This is done with the .populate() command.
 
-# In[8]:
+# In[23]:
 
 
 Set().populate()
